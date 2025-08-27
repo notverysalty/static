@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>牛奶糖小组 - Milk Candy Team</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* 动态背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            33% {
+                transform: translateY(-20px) rotate(1deg);
+            }
+
+            66% {
+                transform: translateY(20px) rotate(-1deg);
+            }
+        }
+
+        /* 标题区域 - 倾斜设计 */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 0;
+            position: relative;
+            transform: skew(-5deg);
+            background: linear-gradient(135deg, #111 0%, #000 100%);
+            border: 2px solid #333;
+            border-radius: 20px;
+        }
+
+        .header-content {
+            transform: skew(5deg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .title-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        /* 牛奶糖图标 - 更像传统糖果 */
+        .candy-icon {
+            width: 70px;
+            height: 50px;
+            position: relative;
+            display: inline-block;
+            animation: candyFloat 3s ease-in-out infinite;
+        }
+
+        /* 糖果主体 - 圆柱形糖果 */
+        .candy-icon::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            width: 50px;
+            height: 40px;
+            background: linear-gradient(45deg,
+                    #fff8e1 0%,
+                    #ffe0b2 20%,
+                    #ffcc80 40%,
+                    #ffb74d 60%,
+                    #ffa726 80%,
+                    #ff9800 100%);
+            border-radius: 25px;
+            box-shadow:
+                0 4px 8px rgba(0, 0, 0, 0.3),
+                inset 0 2px 4px rgba(255, 255, 255, 0.6),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 糖果包装纸 - 顶部褶皱 */
+        .candy-icon::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 15px;
+            width: 40px;
+            height: 15px;
+            background: linear-gradient(45deg,
+                    #fff 0%,
+                    #f5f5f5 30%,
+                    #e0e0e0 70%,
+                    #d0d0d0 100%);
+            border-radius: 20px 20px 0 0;
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.2),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        /* 包装纸褶皱线 */
+        .candy-icon .wrapper-fold {
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            width: 30px;
+            height: 2px;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    rgba(0, 0, 0, 0.1) 20%,
+                    rgba(0, 0, 0, 0.2) 50%,
+                    rgba(0, 0, 0, 0.1) 80%,
+                    transparent 100%);
+            border-radius: 1px;
+        }
+
+        /* 糖果高光 */
+        .candy-icon .candy-highlight {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            width: 20px;
+            height: 15px;
+            background: linear-gradient(45deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.3) 30%,
+                    rgba(255, 255, 255, 0.6) 50%,
+                    rgba(255, 255, 255, 0.3) 70%,
+                    transparent 100%);
+            border-radius: 50%;
+            animation: candyShine 4s ease-in-out infinite;
+        }
+
+        /* 糖果装饰条纹 */
+        .candy-icon .candy-stripe {
+            position: absolute;
+            top: 25px;
+            left: 15px;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.8) 20%,
+                    rgba(255, 255, 255, 0.9) 50%,
+                    rgba(255, 255, 255, 0.8) 80%,
+                    transparent 100%);
+            border-radius: 2px;
+        }
+
+        /* 包装纸底部褶皱 */
+        .candy-icon .wrapper-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 15px;
+            width: 40px;
+            height: 8px;
+            background: linear-gradient(45deg,
+                    #e0e0e0 0%,
+                    #d0d0d0 50%,
+                    #c0c0c0 100%);
+            border-radius: 0 0 20px 20px;
+            box-shadow:
+                0 -1px 3px rgba(0, 0, 0, 0.2),
+                inset 0 1px 2px rgba(255, 255, 255, 0.6);
+        }
+
+        /* 糖果装饰点 */
+        .candy-icon .candy-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, #fff 0%, #ffcc80 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+        }
+
+        .candy-icon .candy-dot:nth-child(1) {
+            top: 20px;
+            left: 25px;
+            animation: dotTwinkle 2.5s ease-in-out infinite;
+        }
+
+        .candy-icon .candy-dot:nth-child(2) {
+            top: 35px;
+            right: 25px;
+            animation: dotTwinkle 2.5s ease-in-out infinite 1.2s;
+        }
+
+        .candy-icon .candy-dot:nth-child(3) {
+            top: 28px;
+            left: 45px;
+            animation: dotTwinkle 2.5s ease-in-out infinite 0.6s;
+        }
+
+        @keyframes candyFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(-2deg);
+            }
+
+            33% {
+                transform: translateY(-5px) rotate(1deg);
+            }
+
+            66% {
+                transform: translateY(-3px) rotate(-1deg);
+            }
+        }
+
+        @keyframes candyShine {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(0.9);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes dotTwinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(0.7);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        .team-name {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #fff, #ccc, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            letter-spacing: 5px;
+        }
+
+        .team-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        /* 组员网格 - 优化布局 */
+        .members-container {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            height: auto;
+        }
+
+        /* 组员卡片样式 */
+        .member-card {
+            background: linear-gradient(135deg, #111 0%, #000 100%);
+            border: 2px solid #333;
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            transform: rotate(0deg);
+            transition: all 0.4s ease;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .member-card:nth-child(1) {
+            transform: rotate(-1deg);
+        }
+
+        .member-card:nth-child(2) {
+            transform: rotate(1deg);
+        }
+
+        .member-card:nth-child(3) {
+            transform: rotate(-0.5deg);
+        }
+
+        .member-card:nth-child(4) {
+            transform: rotate(0.5deg);
+        }
+
+        .member-card:hover {
+            transform: rotate(0deg) scale(1.02);
+            box-shadow: 0 25px 50px rgba(255, 255, 255, 0.1);
+        }
+
+        .member-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .member-name-en {
+            font-size: 1.1rem;
+            color: #ccc;
+            text-align: center;
+            margin-bottom: 25px;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        /* 信息布局 - 网格排列 */
+        .info-grid {
+            display: grid;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .member-card:nth-child(1) .info-grid,
+        .member-card:nth-child(2) .info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .member-card:nth-child(3) .info-grid,
+        .member-card:nth-child(4) .info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .info-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            color: #fff;
+            margin-bottom: 5px;
+            font-size: 0.95rem;
+        }
+
+        .info-value-en {
+            color: #ccc;
+            font-size: 0.8rem;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .personality-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #fff, #ccc);
+            color: #000;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        /* 爱好图标样式 */
+        .hobby-icon {
+            display: inline-block;
+            font-size: 1.2rem;
+            margin: 0 5px;
+            animation: iconFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .hobby-icon:nth-child(2) {
+            animation-delay: 1s;
+        }
+
+        .hobby-icon:nth-child(3) {
+            animation-delay: 2s;
+        }
+
+        @keyframes iconFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-3px) scale(1.1);
+            }
+        }
+
+        /* 底部设计 - 波浪效果 */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #111 0%, #000 100%);
+            border: 2px solid #333;
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: wave 3s infinite;
+        }
+
+        @keyframes wave {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .footer-text {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .members-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 25px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .team-name {
+                font-size: 2.5rem;
+            }
+
+            .members-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .member-card {
+                min-height: auto;
+                padding: 25px;
+            }
+
+            .member-card:nth-child(1) .info-grid,
+            .member-card:nth-child(2) .info-grid,
+            .member-card:nth-child(3) .info-grid,
+            .member-card:nth-child(4) .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 装饰元素 */
+        .decoration {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+
+        .decoration:nth-child(1) {
+            top: 10%;
+            right: 10%;
+            animation-delay: 0s;
+        }
+
+        .decoration:nth-child(2) {
+            bottom: 20%;
+            left: 5%;
+            animation-delay: -5s;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-animation"></div>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="title-row">
+                    <div class="candy-icon">
+                        <div class="wrapper-fold"></div>
+                        <div class="candy-highlight"></div>
+                        <div class="candy-stripe"></div>
+                        <div class="wrapper-bottom"></div>
+                        <div class="candy-dot"></div>
+                        <div class="candy-dot"></div>
+                        <div class="candy-dot"></div>
+                    </div>
+                    <h1 class="team-name">牛奶糖</h1>
+                </div>
+                <p class="team-subtitle">Milk Candy Team</p>
+            </div>
+        </div>
+
+        <div class="members-container">
+            <div class="members-grid">
+                <!-- 组员1 -->
+                <div class="member-card">
+                    <h2 class="member-name">文佳静</h2>
+                    <p class="member-name-en">Jiajing Wen</p>
+
+                    <div class="info-grid">
+                        <div class="info-section">
+                            <div class="info-label">Team / 团队</div>
+                            <div class="info-value">Wahaha</div>
+                            <div class="info-value-en">Wahaha Team</div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-label">来自地区 / From</div>
+                            <div class="info-value">新疆石河子</div>
+                            <div class="info-value-en">Shihezi, Xinjiang</div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-label">爱好 / Hobbies</div>
+                            <div class="info-value">
+                                <span class="hobby-icon">⛷️</span> 滑雪
+                                <span class="hobby-icon">💪</span> 健身
+                            </div>
+                            <div class="info-value-en">Skiing, Fitness</div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-label">16人格 / MBTI</div>
+                            <div class="info-value">ISFP</div>
+                            <div class="info-value-en">The Adventurer</div>
+                            <div class="personality-badge">ISFP</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 组员2 -->
+                <div class="member-card">
+                    <h2 class="member-name">陈晓莹</h2>
+                    <p class="member-name-en">Xiaoying Chen</p>
+
+                    <div class="info-grid">
+                        <div class="info-section">
+                            <div class="info-label">Team / 团队</div>
+                            <div class="info-value">Heytea</div>
+                            <div class="info-value-en">Heytea Team</div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-label">来自地区 / From</div>
+                            <div class="info-value">深圳</div>
+                            <div class="info-value-en">Shenzhen</div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-label">爱好 / Hobbies</div>
+                            <div class="info-value">
+                                <span class="hobby-icon">🍟</span> 吃麦当劳
+                            </div>
+                            <div class="info-value-en">McDonald's Food</div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-label">16人格 / MBTI</div>
+                            <div class="info-value">ENFP</div>
+                            <div class="info-value-en">The Campaigner</div>
+                            <div class="personality-badge">ENFP</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 组员3 -->
+                <div class="member-card">
+                    <h2 class="member-name">陈俊凯</h2>
+                    <p class="member-name-en">Junkai Chen</p>
+
+                    <div class="info-grid">
+                        <div class="info-section">
+                            <div class="info-label">Team / 团队</div>
+                            <div class="info-value">Sprite</div>
+                            <div class="info-value-en">Sprite Team</div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-label">来自地区 / From</div>
+                            <div class="info-value">惠州</div>
+                            <div class="info-value-en">Huizhou</div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-label">爱好 / Hobbies</div>
+                            <div class="info-value">
+                                <span class="hobby-icon">💻</span> Coding
+                            </div>
+                            <div class="info-value-en">Programming</div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-label">16人格 / MBTI</div>
+                            <div class="info-value">INTP-A</div>
+                            <div class="info-value-en">The Logician</div>
+                            <div class="personality-badge">INTP-A</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 组员4 -->
+                <div class="member-card">
+                    <h2 class="member-name">谢一瑄</h2>
+                    <p class="member-name-en">Yixuan Xie</p>
+
+                    <div class="info-grid">
+                        <div class="info-section">
+                            <div class="info-label">Team / 团队</div>
+                            <div class="info-value">Sprite</div>
+                            <div class="info-value-en">Sprite Team</div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-label">来自地区 / From</div>
+                            <div class="info-value">赣州</div>
+                            <div class="info-value-en">Ganzhou</div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-label">爱好 / Hobbies</div>
+                            <div class="info-value">
+                                <span class="hobby-icon">🎣</span> 钓鱼
+                            </div>
+                            <div class="info-value-en">Fishing</div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-label">16人格 / MBTI</div>
+                            <div class="info-value">ISFP-T</div>
+                            <div class="info-value-en">The Adventurer</div>
+                            <div class="personality-badge">ISFP-T</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="footer-text">牛奶糖小组 - 用创意和热情打造美好产品</p>
+            <p class="footer-text">Milk Candy Team - Creating Wonderful Products with Creativity and Passion</p>
+        </div>
+    </div>
+
+    <div class="decoration"></div>
+    <div class="decoration"></div>
+</body>
+
+</html>
